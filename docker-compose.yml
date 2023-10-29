@@ -9,3 +9,4 @@ services:
         container_name: tcp-ws
         ports:
             - '8080:8080'
+            - '8765:8765'
