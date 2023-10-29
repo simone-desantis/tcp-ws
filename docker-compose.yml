@@ -1,0 +1,11 @@
+version: '3.3'
+services:
+    tcp-ws:
+        build: .
+        image: tcp-ws
+        # image: tcp-ws
+        environment:
+            - PYTHONUNBUFFERED=0
+        container_name: tcp-ws
+        ports:
+            - '8080:8080'
