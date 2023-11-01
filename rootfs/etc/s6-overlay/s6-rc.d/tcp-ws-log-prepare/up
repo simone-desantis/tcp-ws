@@ -1,0 +1,3 @@
+if { mkdir -p /var/log/tcp-ws }
+if { chown nobody:nogroup /var/log/tcp-ws }
+chmod 02755 /var/log/tcp-ws

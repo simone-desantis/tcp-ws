@@ -6,6 +6,7 @@ services:
         # image: tcp-ws
         environment:
             - PYTHONUNBUFFERED=0
+            - S6_LOGGING =0
         container_name: tcp-ws
         ports:
             - '8080:8080'

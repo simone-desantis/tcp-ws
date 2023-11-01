@@ -1,0 +1,4 @@
+#!/bin/sh
+#exec 2>&1
+#exec python3 /app/server.py 2>&1
+exec python3 /app/server.py 2>&1

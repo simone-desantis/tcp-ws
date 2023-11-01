@@ -19,7 +19,9 @@ COPY requirements.txt /app
 # Setup python dependencies
 RUN pip3 install -r /app/requirements.txt
 
-CMD ["python3","/app/server.py"]
+#CMD ["python3","/app/server.py"]
+COPY rootfs/ /
+CMD []
 EXPOSE 8080
 EXPOSE 8765
 
