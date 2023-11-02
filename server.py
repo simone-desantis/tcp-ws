@@ -37,7 +37,7 @@ class Broker:
         while True:
             data = await reader.readline()
 
-            if not data or not data.decode:
+            if not data or not data.decode():
                 logging.info(f"Terminating connection with: {addr}")
                 writer.close()
                 await writer.wait_closed()
