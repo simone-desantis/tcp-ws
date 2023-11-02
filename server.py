@@ -1,5 +1,6 @@
 
 import asyncio
+from asyncio import StreamReader, StreamWriter
 
 from websockets.server import serve
 from websockets.legacy.server import WebSocketServerProtocol
@@ -31,17 +32,18 @@ class Broker:
         for websocket in self.ws_listeners:
             await websocket.send(message)
 
-    async def handle_producer(self, reader, writer):
+    async def handle_producer(self, reader: StreamReader, writer: StreamWriter):
+        addr = writer.get_extra_info('peername')
         while True:
             data = await reader.readline()
-            message = data.decode()
-            addr = writer.get_extra_info('peername')
 
-            if not message:
+            if not data or not data.decode:
                 logging.info(f"Terminating connection with: {addr}")
                 writer.close()
                 await writer.wait_closed()
                 break
+            else:
+                message = data.decode()
             logging.debug(f"Received {message!r} from {addr!r}")
             self.compute_rate()
             await self.pub_msg(message)
