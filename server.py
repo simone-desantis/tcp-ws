@@ -1,6 +1,7 @@
 
 import asyncio
 from asyncio import StreamReader, StreamWriter
+from typing import Set
 
 from websockets.server import serve
 from websockets.legacy.server import WebSocketServerProtocol
@@ -18,7 +19,7 @@ handler.setFormatter(formatter)
 root.addHandler(handler)
 class Broker:
     def __init__(self):
-        self.ws_listeners = set()
+        self.ws_listeners: Set[WebSocketServerProtocol] = set()
         self.counter = 0
         self.last_time = None
 
@@ -30,7 +31,14 @@ class Broker:
 
     async def pub_msg(self, message):
         for websocket in self.ws_listeners:
-            await websocket.send(message)
+            try:
+                await asyncio.ensure_future(asyncio.wait_for(websocket.send(message),timeout=1))
+            except asyncio.TimeoutError:
+                print(f"Timeout exceeded for {websocket}")
+                try:
+                    await asyncio.ensure_future(asyncio.wait_for(websocket.close(),timeout=1))
+                except Exception as e:
+                    print(f"Error while closing {websocket} , exception: {e}")
 
     async def handle_producer(self, reader: StreamReader, writer: StreamWriter):
         addr = writer.get_extra_info('peername')
@@ -73,7 +81,7 @@ async def run_server():
     addrs = ', '.join(str(sock.getsockname()) for sock in server.sockets)
     logging.info(f'Serving on {addrs}')
     async with server:
-        async with serve(broker.add_ws, hostname, ws_port):
+        async with serve(broker.add_ws, hostname, ws_port, **{"timeout": 1}):
             await server.serve_forever()
 
 
