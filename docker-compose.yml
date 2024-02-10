@@ -3,7 +3,6 @@ services:
     tcp-ws:
         build: .
         image: tcp-ws
-        # image: tcp-ws
         environment:
             - PYTHONUNBUFFERED=0
             - S6_LOGGING =0
