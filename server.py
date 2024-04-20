@@ -34,11 +34,11 @@ class Broker:
             try:
                 await asyncio.ensure_future(asyncio.wait_for(websocket.send(message),timeout=1))
             except asyncio.TimeoutError:
-                print(f"Timeout exceeded for {websocket}")
+                logging.warn(f"Timeout exceeded for {websocket}")
                 try:
                     await asyncio.ensure_future(asyncio.wait_for(websocket.close(),timeout=1))
                 except Exception as e:
-                    print(f"Error while closing {websocket} , exception: {e}")
+                    logging.error(f"Error while closing {websocket} , exception: {e}")
 
     async def handle_producer(self, reader: StreamReader, writer: StreamWriter):
         addr = writer.get_extra_info('peername')
